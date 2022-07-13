@@ -24,12 +24,12 @@ const dir = content.id;
 
 async function frames() {
   console.log(">[frames] Starting...");
-  await getQuestionFrame();
-  await getCommentsFrames();
+  await generateQuestionFrame();
+  await generateCommentsFrames();
   state.save(content);
 }
 
-async function getQuestionFrame() {
+async function generateQuestionFrame() {
   filepath = `${resultFramesPath}/${dir}/${content.id}.png`;
   let fileReplaced = questionHTML.replace("QUESTION", content.title);
   fileReplaced = fileReplaced.replace("AUTHOR", content.author);
@@ -43,7 +43,7 @@ async function getQuestionFrame() {
   await webshotPromise(fileReplaced, filepath, options);
 }
 
-async function getCommentsFrames() {
+async function generateCommentsFrames() {
   for (const comment of content.comments) {
     var concatSentence = "";
     var i = 0;
