@@ -16,7 +16,7 @@ async function reddit() {
   let content = {};
   await selectThread(content);
   await getThreadContent(content);
-  state.save(content);
+  state.save(content.submission);
 
   async function selectThread(content) {
     try {
