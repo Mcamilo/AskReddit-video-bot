@@ -3,7 +3,7 @@ const state = require("./state.js");
 const charLimit = 3000;
 
 async function text() {
-  console.log(">[text] Initializing...");
+  console.log(">[text] Starting...");
   const content = state.load();
   getMostUpvotedComments(content);
   makeSentences(content);
