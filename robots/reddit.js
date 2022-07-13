@@ -1,52 +1,73 @@
-const snoowrap = require('snoowrap')
-const readline = require('readline-sync')
-const credentials = require('../credentials/snoowrap.json')
-const state = require('./state.js')
-const util = require('util')
+require("dotenv").config();
+const readline = require("readline-sync");
+const snoowrap = require("snoowrap");
+const state = require("./state.js");
+const redditCredentials = {
+  userAgent: process.env.userAgent,
+  clientId: process.env.clientId,
+  clientSecret: process.env.clientSecret,
+  username: process.env.username,
+  password: process.env.password,
+};
 
 async function reddit() {
-	var charCount = 0
-	const	redditApi = new snoowrap(credentials)
-	// const postId = await askSubreddit()
-	const submission = await getSubmission()
-	await filterSubmission()
+  console.log(">[reddit] Starting...");
+  const redditApi = new snoowrap(redditCredentials);
+  let content = {};
+  await selectThread(content);
+  await getThreadContent(content);
+  state.save(content);
 
-	async function askSubreddit() {
-		await redditApi.getSubreddit('AskReddit').getTop({time:'week',limit:30}).then(listing=>{
-			post_list = listing.map(submission=>({"id":submission.id, "title":submission.title}))
-		})
-		return post_list[readline.keyInSelect(post_list.map(post=>post.title),'Selecione um Post:')].id
-	}
+  async function selectThread(content) {
+    try {
+      await redditApi
+        .getSubreddit("AskReddit")
+        .getTop({ time: "week", limit: 9 })
+        .then((listing) => {
+          topThreads = listing.map((submission) => ({
+            id: submission.id,
+            title: submission.title,
+          }));
+        });
+      content.id =
+        topThreads[
+          readline.keyInSelect(
+            topThreads.map((post) => post.title),
+            "Select a Thread: "
+          )
+        ].id;
+    } catch (error) {
+      if (!(error instanceof TypeError)) {
+        console.log(">[reddit] Unexpected Behaviour:" + error);
+        return;
+      }
+      console.log(">[reddit] Canceling...");
+    }
+  }
 
-	async function getSubmission(){
-		// return await redditApi.getSubmission(postId).expandReplies({limit: 2, depth: 1}).then(
-		return await redditApi.getSubmission('1ctqjr').expandReplies({limit: 2, depth: 1}).then(
-			submission => {
-				return {"id":submission.id,"title":submission.title,
-				"author":submission.author.name,"awards":submission.total_awards_received,
-				"ups":submission.ups,"numComments":submission.num_comments,"created":submission.created_utc,
-				"comments":submission.comments.map(comment=>({id:comment.id,created:comment.created_utc,ups:comment.ups,body:comment.body,author:comment.author.name}))
-				}
-			})
-	}
-
-	function filterSubmission(){
-		submission.comments.sort((a, b) => (a.ups > b.ups) ? -1 : 1)
-		submission.comments = filterCommentsVolume()
-		state.save(submission)
-	}
-
-	function filterCommentsVolume(){
-		let filteredComments = []
-		for (comment of submission.comments) {
-			charCount += comment.body.length
-			filteredComments.push(comment)
-			if (charCount>15000) {
-				return filteredComments
-			}
-		}
-		return filteredComments
-	}
+  async function getThreadContent(content) {
+    return await redditApi
+      .getSubmission(content.id)
+      .expandReplies({ limit: 2, depth: 1 })
+      .then((submission) => {
+        content.submission = {
+          id: submission.id,
+          title: submission.title,
+          author: submission.author.name,
+          awards: submission.total_awards_received,
+          ups: submission.ups,
+          numComments: submission.num_comments,
+          created: submission.created_utc,
+          comments: submission.comments.map((comment) => ({
+            id: comment.id,
+            created: comment.created_utc,
+            ups: comment.ups,
+            body: comment.body,
+            author: comment.author.name,
+          })),
+        };
+      });
+  }
 }
 
-module.exports = reddit
+module.exports = reddit;
