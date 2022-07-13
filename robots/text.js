@@ -1,33 +1,40 @@
-const state = require('./state.js')
+const state = require("./state.js");
+// 18 chars per sec. of video --> 10 min ≃ 11k chars
+const charLimit = 3000;
 
-async function text(){
-  console.log("Text Bot...");
-
-  const content = state.load()
-  // const text = '*Read*\n\nAlso\n\n*Seen*'
-  // console.log(text.match(/\(?[^\.\?\!\n]+[.+!?_"'\n]+\)?|.*/g));
-  filterWords()
-  makeSentences()
-  state.save(content)
-
-  function filterWords(){
-    content.comments.forEach(comment => {
-    // comment.body = comment.body.replace(/\n/g, "<br/>")
-    comment.body = comment.body.replace(/'fuck'/g,'duck')
-    comment.body = comment.body.replace(/'fucking'/g,'ducking')
-  })
-  }
-
-  function makeSentences() {
-    content.comments.forEach(comment => {
-      let sentences = (comment.body).match(/\(?[^\.\?\!\n]+[.+!?_\n]+\)?|.*/g)
-      comment.sentences = sentences.filter((entry) => { return entry.trim() != '' })
-    })
-  }
-
-
-
-
+async function text() {
+  console.log(">[text] Initializing...");
+  const content = state.load();
+  getMostUpvotedComments(content);
+  makeSentences(content);
+  state.save(content);
 }
 
-module.exports = text
+function getMostUpvotedComments(content) {
+  content.comments.sort((a, b) => (a.ups > b.ups ? -1 : 1));
+  content.comments = filterCommentsVolume(content);
+}
+
+function filterCommentsVolume(content) {
+  var charCount = 0;
+  let filteredComments = [];
+  for (comment of content.comments) {
+    charCount += comment.body.length;
+    filteredComments.push(comment);
+    if (charCount > charLimit) {
+      return filteredComments;
+    }
+  }
+  return filteredComments;
+}
+
+function makeSentences(content) {
+  content.comments.forEach((comment) => {
+    let sentences = comment.body.match(/\(?[^\.\?\!\n]+[.+!?_\n]+\)?|.*/g);
+    comment.sentences = sentences.filter((entry) => {
+      return entry.trim() != "";
+    });
+  });
+}
+
+module.exports = text;
