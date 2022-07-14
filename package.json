@@ -1,10 +1,11 @@
 {
   "name": "reddit-video-maker",
   "version": "1.0.0",
-  "description": "Projeto para automatizar a criação de videos com conteúdos do reddit.",
+  "description": "Project to automate the creation of videos with reddit content.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -18,20 +19,17 @@
   "homepage": "https://github.com/Mcamilo/reddit-video-maker#readme",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.19",
-    "@google-cloud/storage": "^3.0.2",
     "@google-cloud/text-to-speech": "^1.1.2",
     "dom-parser": "^0.1.6",
+    "dotenv": "^16.0.1",
     "ffmpeg": "0.0.4",
     "fs": "0.0.1-security",
     "get-audio-duration": "^1.0.0",
     "googleapis": "^41.0.1",
-    "ibm-watson": "^4.3.0",
     "keyword-extractor": "0.0.17",
-    "node-notifier": "^5.4.1",
     "node-webshot": "^1.0.3",
     "readline-sync": "^1.4.9",
     "snoowrap": "^1.17.0",
-    "sox-audio": "^0.3.0",
     "util": "^0.12.0",
     "videoshow": "^0.1.11"
   }
