@@ -19,16 +19,16 @@ async function reddit() {
   state.save(content.submission);
 
   async function selectThread(content) {
+    await redditApi
+      .getSubreddit("AskReddit")
+      .getTop({ time: "week", limit: 9 })
+      .then((listing) => {
+        topThreads = listing.map((submission) => ({
+          id: submission.id,
+          title: submission.title,
+        }));
+      });
     try {
-      await redditApi
-        .getSubreddit("AskReddit")
-        .getTop({ time: "week", limit: 9 })
-        .then((listing) => {
-          topThreads = listing.map((submission) => ({
-            id: submission.id,
-            title: submission.title,
-          }));
-        });
       content.id =
         topThreads[
           readline.keyInSelect(
@@ -42,6 +42,7 @@ async function reddit() {
         return;
       }
       console.log(">[reddit] Canceling...");
+      process.exit()
     }
   }
 
