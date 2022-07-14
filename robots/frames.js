@@ -19,18 +19,18 @@ const options = {
   },
   siteType: "html",
 };
-const content = state.load();
-const dir = content.id;
+
 
 async function frames() {
   console.log(">[frames] Starting...");
-  await generateQuestionFrame();
-  await generateCommentsFrames();
+  const content = state.load();
+  await generateQuestionFrame(content);
+  await generateCommentsFrames(content);
   state.save(content);
 }
 
-async function generateQuestionFrame() {
-  filepath = `${resultFramesPath}/${dir}/${content.id}.png`;
+async function generateQuestionFrame(content) {
+  filepath = `${resultFramesPath}/${content.id}/${content.id}.png`;
   let fileReplaced = questionHTML.replace("QUESTION", content.title);
   fileReplaced = fileReplaced.replace("AUTHOR", content.author);
   fileReplaced = fileReplaced.replace("UPS", kFormatter(content.ups));
@@ -43,7 +43,7 @@ async function generateQuestionFrame() {
   await webshotPromise(fileReplaced, filepath, options);
 }
 
-async function generateCommentsFrames() {
+async function generateCommentsFrames(content) {
   for (const comment of content.comments) {
     var concatSentence = "";
     var i = 0;
@@ -51,7 +51,7 @@ async function generateCommentsFrames() {
     for (const sentence of comment.sentences) {
       concatSentence += sentence.replace(/\n/g, "<br/>");
       i++;
-      filepath = `${resultFramesPath}/${dir}/${comment.id}-${i}.png`;
+      filepath = `${resultFramesPath}/${content.id}/${comment.id}-${i}.png`;
       let fileReplaced = commentHTML.replace("AUTOR", comment.author);
       fileReplaced = fileReplaced.replace("UPS", kFormatter(comment.ups));
       fileReplaced = fileReplaced.replace("CREATED", getDate(comment.created));

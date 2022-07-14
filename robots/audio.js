@@ -7,18 +7,18 @@ const util = require("util");
 // Inject Google app credentials
 // export GOOGLE_APPLICATION_CREDENTIALS="/path_to_credentials/credentials.json"
 const client = new textToSpeech.TextToSpeechClient();
-const content = state.load();
-const audioPath = "./result/audios/" + content.id;
+const audioPath = "./result/audios";
 
 async function audio() {
   console.log("> [audio] Starting...");
-  await generateAudioQuestion();
-  await generateAudios();
+  const content = state.load();
+  await generateAudioQuestion(content);
+  await generateAudios(content);
   state.save(content);
 
-  async function generateAudioQuestion() {
+  async function generateAudioQuestion(content) {
     try {
-      fs.mkdirSync(audioPath, { recursive: true });
+      fs.mkdirSync(`${audioPath}/${content.id}`, { recursive: true });
     } catch (e) {
       console.log(`Error: ${e}`);
     }
@@ -41,22 +41,22 @@ async function audio() {
     const [response] = await client.synthesizeSpeech(request);
     const writeFile = util.promisify(fs.writeFile);
     await writeFile(
-      audioPath + "/" + content.id + ".flac",
+      `${audioPath}/${content.id}/${content.id}.flac`,
       response.audioContent,
       "binary"
     );
     content.duration = await getDuration(
-      audioPath + "/" + content.id + ".flac"
+      `${audioPath}/${content.id}/${content.id}.flac`
     );
-    content.audio = audioPath + "/" + content.id + ".flac";
+    content.audio = `${audioPath}/${content.id}/${content.id}.flac`;
   }
 
-  async function generateAudios() {
+  async function generateAudios(content) {
     for (const comment of content.comments) {
       var i = 0;
       for (const frame of comment.frames) {
         i++;
-        sentencePath = audioPath + "/" + comment.id + "-" + i + ".flac";
+        sentencePath = `${audioPath}/${content.id}/${comment.id}-${i}.flac`;
         var request = {
           input: { text: frame.body },
           voice: {
