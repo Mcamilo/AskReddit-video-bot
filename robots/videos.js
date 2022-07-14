@@ -98,6 +98,9 @@ async function videos() {
 
       mergedVideo
         .mergeToFile(`${resultsPath}/${content.id}/${content.id}-video.mp4`, "./tmp/")
+        .on("start", function(){
+          console.log(">[video] Merging Cuts")
+        })
         .on("error", function (err) {
           console.log(">[video] " + err.message);
         })

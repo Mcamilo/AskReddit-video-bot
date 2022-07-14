@@ -1,6 +1,6 @@
 const state = require("./state.js");
 // 18 chars per sec. of video --> 10 min ≃ 11k chars
-const charLimit = 3000;
+const charLimit = 1500;
 
 async function text() {
   console.log(">[text] Starting...");
