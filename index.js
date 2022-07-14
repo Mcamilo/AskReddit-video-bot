@@ -15,8 +15,7 @@ async function start() {
 }
 
 try {
-	start();
-	console.log(">[core] Done...")
+	start()
 } catch (error) {
 	console.log(`>[core] ${error}`)	
 }
