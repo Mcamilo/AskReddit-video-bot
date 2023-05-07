@@ -26,7 +26,7 @@
     "fs": "0.0.1-security",
     "get-audio-duration": "^1.0.0",
     "googleapis": "^41.0.1",
-    "keyword-extractor": "0.0.17",
+    "keyword-extractor": "0.0.25",
     "node-webshot": "^1.0.3",
     "readline-sync": "^1.4.9",
     "snoowrap": "^1.17.0",
