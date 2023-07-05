@@ -19,7 +19,7 @@
   "homepage": "https://github.com/Mcamilo/reddit-video-maker#readme",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.19",
-    "@google-cloud/text-to-speech": "^1.1.2",
+    "@google-cloud/text-to-speech": "^4.2.3",
     "dom-parser": "^0.1.6",
     "dotenv": "^16.0.1",
     "ffmpeg": "0.0.4",
